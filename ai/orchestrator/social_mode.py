@@ -3,7 +3,7 @@ from ai.manager import ai_manager
 from ai.orchestrator.social_memory import social_memory
 from ai.orchestrator.personality_prompt import get_social_prompt
 from ai.orchestrator.context import build_context, format_context_for_prompt
-from ai.orchestrator.intent import Intent
+from ai.orchestrator.master_intent_router import Intent
 from ai.orchestrator.humanizer import humanizer
 from utils.logger import ai_logger
 
@@ -14,8 +14,8 @@ async def handle_social_chat(channel_id: int, user_query: str) -> str:
     Includes a Response Humanization Layer to strip technical jargon.
     """
     try:
-        # 1. Fetch real-time status for grounding
-        raw_context = await build_context(Intent.SERVER_STATUS, user_query)
+        # 1. Fetch real-time status for grounding (Social mode uses base state)
+        raw_context = await build_context(Intent.SOCIAL, user_query)
         formatted_context = format_context_for_prompt(raw_context)
 
         # 2. Get social history for context memory
@@ -34,7 +34,6 @@ async def handle_social_chat(channel_id: int, user_query: str) -> str:
         content = response.content
 
         # 5. Response Humanization Layer
-        # Strips internal terms and translates technical facts to casual Manglish
         content = humanizer.humanize(content)
         
         # 6. Save AI's response to memory
