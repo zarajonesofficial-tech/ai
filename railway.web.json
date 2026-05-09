@@ -8,6 +8,7 @@
       "api/**",
       "bot/**",
       "core/**",
+      "frontend/**",
       "mcp_server/**",
       "utils/**",
       "main.py",
