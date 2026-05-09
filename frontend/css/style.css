@@ -135,6 +135,17 @@ button:hover {
     color: white;
 }
 
+.secondary-btn {
+    background-color: transparent;
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.secondary-btn:hover {
+    background-color: var(--accent);
+    color: white;
+}
+
 #logout-btn {
     font-size: 0.8rem;
     border-color: var(--danger);
@@ -162,4 +173,110 @@ th, td {
 th {
     color: var(--text-secondary);
     font-weight: normal;
+}
+
+.muted {
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    color: var(--text-secondary);
+}
+
+label span {
+    font-size: 0.85rem;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    background-color: #0f1520;
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.8rem 0.9rem;
+    font-family: var(--font-mono);
+}
+
+textarea {
+    resize: vertical;
+    margin-top: 1rem;
+}
+
+.full-width {
+    margin-top: 1rem;
+}
+
+.checkbox-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin-top: 1rem;
+}
+
+.checkbox-row label {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-primary);
+}
+
+.checkbox-row input {
+    width: auto;
+}
+
+.action-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 1rem;
+}
+
+.status-box {
+    min-height: 2.8rem;
+    margin-top: 1rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-secondary);
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.status-box.success {
+    border-color: var(--success);
+    color: #a6e3b4;
+}
+
+.status-box.error {
+    border-color: var(--danger);
+    color: #ff9d97;
+}
+
+@media (max-width: 860px) {
+    .container {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .sidebar {
+        width: 100%;
+    }
+
+    header,
+    #main-view {
+        padding: 1.25rem;
+    }
 }

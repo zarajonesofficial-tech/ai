@@ -3,6 +3,8 @@ import os
 import sys
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from core.config import settings
 from utils.logger import setup_logging, core_logger
 
@@ -10,6 +12,7 @@ from utils.logger import setup_logging, core_logger
 setup_logging(debug=settings.DEBUG)
 
 from mcp_server.server import mcp_app
+from api.routers.dashboard import router as dashboard_router
 from api.routers.state import router as state_router
 from contextlib import asynccontextmanager
 
@@ -49,9 +52,17 @@ app.add_middleware(
 
 # Mount MCP Server
 app.mount("/mcp", mcp_app.sse_app(mount_path="/mcp"))
+app.mount("/css", StaticFiles(directory="frontend/css"), name="frontend-css")
+app.mount("/js", StaticFiles(directory="frontend/js"), name="frontend-js")
 
 # Include API Routers
 app.include_router(state_router, prefix="/api")
+app.include_router(dashboard_router, prefix="/api")
+
+
+@app.get("/dashboard")
+async def dashboard():
+    return FileResponse("frontend/index.html")
 
 @app.get("/health")
 async def health_check():
@@ -59,7 +70,7 @@ async def health_check():
 
 @app.get("/")
 async def root():
-    return {"message": f"Welcome to {settings.PROJECT_NAME} API. Open frontend/index.html to view the dashboard."}
+    return FileResponse("frontend/index.html")
 
 if __name__ == "__main__":
     import uvicorn
