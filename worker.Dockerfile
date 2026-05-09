@@ -1,5 +1,5 @@
-# Use Microsoft's official Playwright image
-FROM mcr.microsoft.com/playwright/python:v1.43.0-jammy
+# Use the Playwright image that matches the pinned Python Playwright version.
+FROM mcr.microsoft.com/playwright/python:v1.59.0-noble
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -8,9 +8,9 @@ ENV PYTHONUNBUFFERED 1
 # Set work directory
 WORKDIR /app
 
-# Install python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Install Python dependencies for the worker.
+COPY requirements.txt requirements-worker.txt ./
+RUN pip install --no-cache-dir -r requirements-worker.txt
 
 # Copy project files
 COPY . .

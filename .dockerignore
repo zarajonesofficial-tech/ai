@@ -1,0 +1,11 @@
+.git
+.gitignore
+.codex
+.agents
+venv
+__pycache__
+*.pyc
+.env
+officialbot_source/node_modules
+officialbot_source/.env
+frontend
