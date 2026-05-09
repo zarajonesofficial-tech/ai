@@ -1,0 +1,21 @@
+# Virtual environment
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Environment variables (Sensitive!)
+.env
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+
+# Local test scripts (optional to exclude, but keeping the repo clean)
+test_all_features.py
+test_orchestrator.py
+verify_naturalization.py
+verify_social.py

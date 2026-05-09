@@ -1,0 +1,16 @@
+fastapi[all]
+uvicorn
+discord.py
+pydantic-settings
+supabase
+playwright
+boto3
+aioboto3
+httpx
+python-multipart
+python-dotenv
+mcp
+aiorcon
+loguru
+python-jose[cryptography]
+passlib[bcrypt]
