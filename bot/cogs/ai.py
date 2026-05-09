@@ -6,18 +6,24 @@ from discord.ext import commands
 from ai.orchestrator.main import orchestrator
 from ai.orchestrator.social_memory import social_memory
 from core.repository import op_repo
+from loguru import logger
 
 class AICog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.channel_cooldowns = {}
-        self.is_throttled = False # Global flag to skip typing if 429 occurs
+        self.is_throttled = False
 
     @app_commands.command(name="ai", description="Ask the CHRIZ__3656 AI a question")
     async def ai_ask(self, interaction: discord.Interaction, question: str):
         await interaction.response.defer()
         try:
-            response_content = await orchestrator.handle_query(question)
+            # Pass full context to allow potential action execution
+            response_content = await orchestrator.handle_query(
+                message=question,
+                member=interaction.user,
+                channel=interaction.channel
+            )
             
             embed = discord.Embed(
                 title="AI Operational Assistant", 
@@ -27,7 +33,7 @@ class AICog(commands.Cog):
             embed.set_footer(text="Grounded in real-time server data.")
             await interaction.followup.send(embed=embed)
         except Exception as e:
-            utils.logger.bot_logger.error(f"AI command failed: {e}")
+            logger.bind(module="BOT").error(f"AI command failed: {e}")
             await interaction.followup.send("❌ Sorry, I encountered an error.")
 
     @commands.Cog.listener()
@@ -56,15 +62,14 @@ class AICog(commands.Cog):
             self.channel_cooldowns[message.channel.id] = now
 
             try:
-                # OPTIONAL: Trigger typing indicator ONCE (not persistent)
-                # If we are throttled, skip this to avoid spamming the API
+                # Trigger typing indicator once
                 if not self.is_throttled:
                     try:
                         await message.channel.typing()
                     except discord.HTTPException as e:
                         if e.status == 429:
                             self.is_throttled = True
-                            utils.logger.bot_logger.warning("Discord throttling detected. Entering silent mode.")
+                            logger.bind(module="BOT").warning("Discord throttling detected.")
                 
                 clean_content = message.content.replace(f"<@{self.bot.user.id}>", "").replace(f"<@!{self.bot.user.id}>", "").strip()
                 
@@ -72,24 +77,24 @@ class AICog(commands.Cog):
                     await message.reply("Entha bro, njan ivide und 👀")
                     return
 
+                # Master Pipeline: Automatically routes to Social, Action, or Factual
                 response_content = await orchestrator.handle_query(
                     message=clean_content,
-                    channel_id=message.channel.id
+                    member=message.author,
+                    channel=message.channel
                 )
                 
                 await message.reply(response_content)
-                
-                # Reset throttle flag on success
                 self.is_throttled = False
                 
             except discord.HTTPException as e:
                 if e.status == 429:
                     self.is_throttled = True
-                    utils.logger.bot_logger.warning(f"Throttled by Discord (429) in channel {message.channel.id}")
+                    logger.bind(module="BOT").warning(f"Throttled (429) in channel {message.channel.id}")
                 else:
-                    utils.logger.bot_logger.error(f"Discord HTTP Error: {e}")
+                    logger.bind(module="BOT").error(f"Discord HTTP Error: {e}")
             except Exception as e:
-                utils.logger.bot_logger.error(f"AI Chat failed: {e}")
+                logger.bind(module="BOT").error(f"AI Chat failed: {e}")
 
 async def setup(bot):
     await bot.add_cog(AICog(bot))

@@ -1,0 +1,18 @@
+{
+  "send_message": "user",
+  "mention_user": "user",
+  "mention_role": "moderator",
+  "mention_everyone": "admin",
+  "warn_user": "moderator",
+  "mute_user": "moderator",
+  "ban_user": "admin",
+  "kick_user": "moderator",
+  "restart_server": "admin",
+  "maintenance_on": "admin",
+  "maintenance_off": "admin",
+  "mc_broadcast": "moderator",
+  "mc_command": "admin",
+  "clear_chat": "moderator",
+  "create_ticket": "user",
+  "announce_event": "moderator"
+}

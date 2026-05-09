@@ -1,76 +1,68 @@
 # CHRIZ__3656 AI — Operational Assistant 🌌
 
-**CHRIZ__3656 AI** is a modular, tool-first AI operations platform designed to manage Minecraft Bedrock servers, Discord communities, and automated workflows. It transforms a standard AI chatbot into a factual system assistant by grounding every response in real-time server data, while maintaining a naturally conversational social personality.
+**CHRIZ__3656 AI** is a modular, tool-first AI operations platform designed to manage Minecraft Bedrock servers, Discord communities, and automated workflows. It transforms a standard AI chatbot into a factual system assistant by grounding every response in real-time server data, while maintaining a naturally conversational social personality and secure action execution.
 
 ---
 
-## 🚀 Current Development Stage: **PRODUCTION-READY**
-The platform features a **Dual-Layer Brain** that seamlessly switches between factual infrastructure management and natural community engagement.
+## 🚀 Current Development Stage: **PRODUCTION-HARDENED**
+The platform features a **Four-Mode Master Orchestrator** that intelligently routes and executes requests with absolute precision.
 
 | Component | Status | Description |
 |---|---|---|
-| **Core API** | ✅ Stable | FastAPI backend with unified color-coded logging. |
-| **Discord Bot** | ✅ Functional | 8+ commands, Social Personality, & Ticket systems. |
-| **AI Orchestrator**| ✅ Reliable | Tool-first logic with deterministic fact injection. |
-| **Social Layer** | ✅ Natural | Conversational Manglish (English/Malayalam/Slang). |
-| **Knowledge Base** | ✅ Optimized| Multi-keyword search with title prioritization. |
-| **MC RCON** | ✅ Stable | Robust async connection management (aiorcon). |
-| **Automation** | ✅ Graceful | Playwright worker for non-API panel interactions. |
-| **Dashboard** | ✅ Real-time| Live metrics (Players, Tickets, Tokens) on Localhost. |
+| **Master Router** | ✅ Stable | LLM-based intent classification (Workflow/Action/Fact/Social). |
+| **Action Engine** | ✅ Active | Secure Discord/Minecraft command execution with RBAC. |
+| **Workflow Mgr** | ✅ Active | Multi-step task planning (e.g., Maintenance Cycles). |
+| **Permission Sys**| ✅ Secure | Role-based capability validation for all AI actions. |
+| **Social Layer** | ✅ Natural | Conversations in Manglish with zero technical leakage. |
+| **MC RCON** | ✅ Stable | Robust async connection management for server control. |
+| **Dashboard** | ✅ Live | Live metrics and task monitoring on Localhost. |
 
 ---
 
-## 🧠 Dual-Layer AI Architecture
+## 🧠 Master Orchestration Architecture
 
-### 1. Operational Mode (Factual)
-When factual data is required (server IP, player counts, rules, moderation), the bot uses a **Tool-First pipeline**:
-`Intent Detection` → `Real Data Retrieval` → `Fact Injection` → `LLM Generation`.
-This ensures **Zero Hallucinations** for critical server data.
+The system uses a **Priority-Based Routing** model:
 
-### 2. Social Mode (Conversational)
-When users chat naturally, mention the bot, or reply to it, the **Social Naturalization Layer** activates:
-- **Language:** Speaks natural **Manglish** (70% English / 30% Malayalam Slang).
-- **Personality:** Intelligent, chill, slightly playful, and culturally aware.
-- **Memory:** Remembers the last 20 messages in the channel to hold natural discussions.
+1. **WORKFLOW MODE:** For complex, multi-step requests (e.g., "announce and restart").
+2. **ACTION MODE:** For single executable commands (e.g., "mention everyone", "mute user").
+3. **FACTUAL MODE:** For server data retrieval (e.g., player counts, rules).
+4. **SOCIAL MODE:** For casual chatting and community banter.
+
+### 🛡️ Security First
+The AI CANNOT perform destructive actions without permission. The **Permission Validator** checks the user's real Discord roles against the `capability_registry.json` before any action is executed.
 
 ---
 
 ## 🛠️ Core Features
 
-### 1. Factual AI Assistant
-- **Social Naturalization:** Uses example-driven generation to avoid robotic "translator" phrasing.
-- **Humanization Layer:** Automatically strips internal technical jargon (like "REAL-TIME CONTEXT") and translates server facts into natural conversational Manglish.
-- **Context Memory:** Maintains a rolling history window per channel.
-- **Zero-Hallucination:** Strictly follows factual context for server infrastructure data.
+### 1. Social & Humanized AI
+- **Manglish Naturalization:** Speaks casual gamer-style Manglish (70% English / 30% Slang).
+- **Humanizer Layer:** Post-processes all responses to strip technical jargon (e.g., "retrieved context").
+- **Social Memory:** Remembers channel context across 20+ messages.
 
-### 2. Knowledge Base (RAG)
-- **SkyRealms Docs:** Pre-ingested with server rules, ranks, skills, and onboarding info.
-- **Robust Search:** Uses multi-keyword "OR" logic to find facts accurately without complex embeddings.
+### 2. Infrastructure Automation
+- **Action Executor:** Securely handles moderation (warn/mute), mentions, and Discord element creation.
+- **Workflow Planner:** Breaks complex community requests into logical execution steps.
+- **Minecraft Sync:** Direct RCON integration for live player stats and console command execution.
 
-### 3. Minecraft Bedrock & Discord
-- **Real-time Sync:** Discord `/status` and `/players` commands pull live data from RCON.
-- **Modular Moderation:** `/warn`, `/mute`, and `/ban` with persistent audit logs in Supabase.
-- **Operational Awareness:** AI understands maintenance modes and active server events.
-
-### 4. Stability & Monitoring
-- **Clean Logging:** Color-coded terminal output categorized by `[CORE]`, `[BOT]`, `[AI]`, `[WORKER]`.
-- **Unified Launcher:** `launch.sh` handles startup and graceful cleanup of all services.
+### 3. Knowledge Management
+- **RAG Engine:** Searches the SkyRealms knowledge base for factual community information.
+- **Title Prioritization:** Ensures the most relevant docs are used for AI grounding.
 
 ---
 
 ## 📁 Project Structure
 ```text
 /CHRIZ3656
-├── ai/                # Orchestrator, Social Mode, & Knowledge Base
-├── api/               # FastAPI routers (Live State, RBAC, Auth)
-├── bot/               # discord.py Cogs (Moderation, Minecraft, AI, Tickets)
-├── core/              # Pydantic Config, DB Repositories, & Workflows
-├── frontend/          # Vanilla JS/CSS/HTML dashboard (Live metrics)
-├── mcp_server/        # MCP Tools (Direct server & member inspection)
+├── ai/                # Master Router, Action Executor, Workflow Mgr, Social Memory
+├── api/               # FastAPI routers (Live State, Dashboard API)
+├── bot/               # discord.py Cogs and Social Trigger system
+├── core/              # Config, DB Repositories, & Workflow runners
+├── frontend/          # Vanilla JS dashboard (Real-time monitoring)
+├── mcp_server/        # MCP Tools for server & member inspection
 ├── utils/             # RCON, Logger, & Supabase Client
-├── worker/            # Playwright background worker
-├── launch.sh          # Unified one-command startup script
-└── README.md          # Project documentation
+├── worker/            # Playwright background automation worker
+└── launch.sh          # Unified one-command startup script
 ```
 
 ---
@@ -85,18 +77,14 @@ playwright install chromium
 
 # Configuration
 cp .env.example .env
-# Fill in your Discord, Supabase, and AI Provider (Groq/Gemini/AWS) keys
-
-# Initialize Database
-# Run database_schema.sql in your Supabase SQL Editor (Enable 'pgvector' first)
+# Fill in your Discord, Supabase, and AI Provider keys (Groq/Gemini/AWS)
 ```
 
 ### 2. Launch
 ```bash
-# Start the entire ecosystem
+# Start the full ecosystem
 ./launch.sh
 ```
-View the live monitor at: `http://localhost:8080`
 
 ---
 
