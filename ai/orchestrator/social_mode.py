@@ -4,12 +4,14 @@ from ai.orchestrator.social_memory import social_memory
 from ai.orchestrator.personality_prompt import get_social_prompt
 from ai.orchestrator.context import build_context, format_context_for_prompt
 from ai.orchestrator.intent import Intent
+from ai.orchestrator.humanizer import humanizer
 from utils.logger import ai_logger
 
 async def handle_social_chat(channel_id: int, user_query: str) -> str:
     """
     The pipeline for natural, social conversations.
     Uses example-driven context and a specialized personality prompt.
+    Includes a Response Humanization Layer to strip technical jargon.
     """
     try:
         # 1. Fetch real-time status for grounding
@@ -31,9 +33,9 @@ async def handle_social_chat(channel_id: int, user_query: str) -> str:
 
         content = response.content
 
-        # 5. Simple Post-processing Naturalization (The "Nudge")
-        # Ensure it doesn't end with assistant-like boilerplate if it leaked through
-        content = content.replace("As an AI assistant,", "").replace("How can I help you?", "").strip()
+        # 5. Response Humanization Layer
+        # Strips internal terms and translates technical facts to casual Manglish
+        content = humanizer.humanize(content)
         
         # 6. Save AI's response to memory
         await social_memory.add_message(channel_id, "assistant", content)

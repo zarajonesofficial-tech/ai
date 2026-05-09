@@ -3,6 +3,7 @@ from ai.orchestrator.intent import Intent, detect_intent
 from ai.orchestrator.context import build_context, format_context_for_prompt
 from ai.orchestrator.social_mode import handle_social_chat
 from ai.orchestrator.social_memory import social_memory
+from ai.orchestrator.humanizer import humanizer
 from ai.manager import ai_manager
 from utils.logger import core_logger
 
@@ -13,10 +14,10 @@ class AIOrchestrator:
             "Your goal is to provide accurate, factual information about the server and community. "
             "CRITICAL RULES:\n"
             "1. SCAN ALL provided REAL-TIME SYSTEM CONTEXT sections. Facts are often listed under specific headers.\n"
-            "2. USE ONLY the provided context. If a fact (like a skill or a feature) is in the context, you MUST use it.\n"
-            "3. If the context TRULY does not contain the answer after checking every section, say 'I don't have that information'.\n"
-            "4. Do not hallucinate. Do not use outside knowledge about Minecraft or other servers.\n"
-            "5. Be professional, concise, and helpful."
+            "2. USE ONLY the provided context. If a fact is in the context, you MUST use it.\n"
+            "3. **NEVER** mention internal terms like 'REAL-TIME SYSTEM CONTEXT' or 'Minecraft Server Data'. Speak naturally.\n"
+            "4. If the context TRULY does not contain the answer, say 'I don't have that information'.\n"
+            "5. Do not hallucinate. Be professional, concise, and helpful."
         )
 
     async def handle_query(self, message: str, channel_id: int = 0, history: List[Dict[str, str]] = None) -> str:
@@ -55,15 +56,18 @@ class AIOrchestrator:
                 system_prompt=full_system_prompt
             )
 
-            # Save result to memory if possible
-            if channel_id != 0:
-                await social_memory.add_message(channel_id, "assistant", response.content)
+            content = response.content
 
-            return response.content
+            # 4. Humanization Pass
+            # If we are in a channel context (social chat), humanize the factual response
+            if channel_id != 0:
+                content = humanizer.humanize(content)
+                await social_memory.add_message(channel_id, "assistant", content)
+
+            return content
 
         except Exception as e:
             core_logger.error(f"Orchestrator failed: {e}")
             return "❌ I encountered an internal error while trying to process your request."
-
 
 orchestrator = AIOrchestrator()

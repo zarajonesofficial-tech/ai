@@ -39,6 +39,7 @@ When users chat naturally, mention the bot, or reply to it, the **Social Natural
 
 ### 1. Factual AI Assistant
 - **Social Naturalization:** Uses example-driven generation to avoid robotic "translator" phrasing.
+- **Humanization Layer:** Automatically strips internal technical jargon (like "REAL-TIME CONTEXT") and translates server facts into natural conversational Manglish.
 - **Context Memory:** Maintains a rolling history window per channel.
 - **Zero-Hallucination:** Strictly follows factual context for server infrastructure data.
 
