@@ -5,12 +5,13 @@ from ai.manager import ai_manager
 from ai.orchestrator.permission_validator import permission_validator
 from ai.orchestrator.humanizer import humanizer
 from utils.minecraft import mc_client
+from utils.pterodactyl import ptero_client
 from utils.logger import core_logger
 
 class ActionExecutor:
     """
     Parses intent into executable tasks, validates permissions, 
-    and interacts with Discord/Minecraft/DB.
+    and interacts with Discord/Minecraft/DB/Pterodactyl/Official Bot.
     """
 
     SYSTEM_PROMPT = """
@@ -27,9 +28,10 @@ class ActionExecutor:
     - maintenance_on()
     - maintenance_off()
     - mc_broadcast(message: str)
+    - review_whitelist()
     
-    Example: 'mute @chriz for 10 mins for spam'
-    Output: {"action": "mute_user", "params": {"username": "chriz", "duration_mins": 10, "reason": "spam"}}
+    Example: 'review the whitelist'
+    Output: {"action": "review_whitelist", "params": {}}
     """
 
     async def execute(self, message: str, member: discord.Member, channel: discord.TextChannel) -> str:
@@ -41,7 +43,7 @@ class ActionExecutor:
                 system_prompt=self.SYSTEM_PROMPT
             )
             
-            # Clean JSON from potential markdown blocks
+            # Clean JSON
             clean_json = parse_resp.content.replace("```json", "").replace("```", "").strip()
             data = json.loads(clean_json)
             action = data.get("action")
@@ -61,20 +63,38 @@ class ActionExecutor:
                 
             elif action == "mute_user":
                 target_name = params.get("username", "")
-                # (Simple username lookup logic needed here or passed from bot)
                 result_msg = f"Attempting to mute {target_name}..."
                 
             elif action == "restart_server":
-                # Trigger RCON or Automation Job
-                await mc_client.run_command("stop")
-                result_msg = "Restart command sent to Minecraft server."
+                # Use official Pterodactyl Client API
+                success = await ptero_client.send_power_signal("restart")
+                if success:
+                    result_msg = "Restart signal sent to Pterodactyl panel successfully."
+                else:
+                    await mc_client.run_command("stop")
+                    result_msg = "Pterodactyl failed, fallback restart sent via RCON."
 
             elif action == "send_message":
                 await channel.send(params.get("content", "Hello!"))
                 result_msg = "Message sent."
 
+            elif action == "mc_broadcast":
+                msg = params.get("message", "Announcement from Discord")
+                await mc_client.run_command(f"say {msg}")
+                result_msg = "Broadcasted message to Minecraft server."
+
+            elif action == "review_whitelist":
+                # Import here to avoid circular import if any
+                from mcp_server.server import get_whitelist_applications
+                apps = await get_whitelist_applications()
+                if not apps or "error" in str(apps):
+                    result_msg = "No pending whitelist applications found bro."
+                else:
+                    count = len(apps)
+                    result_msg = f"Found {count} pending whitelist applications. You can check them on the official dashboard."
+
             else:
-                result_msg = f"Action {action} is mapped but not fully implemented yet."
+                result_msg = f"Action {action} is not fully implemented yet."
 
             # 4. Humanize Result
             return humanizer.humanize(result_msg)

@@ -2,9 +2,11 @@ from mcp.server.fastmcp import FastMCP
 from loguru import logger
 from core.repository import op_repo, user_repo
 from bot.main import bot as discord_bot
+from core.config import settings
 import discord
+import httpx
 
-# Initialize FastMCP - The modern high-level API for MCP
+# Initialize FastMCP
 mcp_app = FastMCP(
     "CHRIZ__3656 AI MCP Server",
     instructions="Modular AI-powered operations, automation, and community management platform."
@@ -16,7 +18,6 @@ async def send_discord_message(channel_id: int, content: str) -> str:
     try:
         channel = discord_bot.get_channel(channel_id)
         if not channel:
-            # Try fetching if not in cache
             channel = await discord_bot.fetch_channel(channel_id)
         
         if isinstance(channel, (discord.TextChannel, discord.Thread)):
@@ -86,3 +87,18 @@ async def list_channels() -> list:
         return []
     
     return [{"name": c.name, "id": c.id, "type": str(c.type)} for c in guild.channels]
+
+@mcp_app.tool()
+async def get_whitelist_applications() -> list:
+    """Fetch pending whitelist applications from the official backend for review"""
+    url = f"{settings.OFFICIAL_BOT_API}/api/whitelist/applications"
+    headers = {"X-AI-PLATFORM-KEY": settings.INTERNAL_API_KEY} if settings.INTERNAL_API_KEY else {}
+    
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url, headers=headers, timeout=10.0)
+            if response.status_code == 200:
+                return response.json()
+            return [{"error": f"Backend returned {response.status_code}"}]
+    except Exception as e:
+        return [{"error": str(e)}]

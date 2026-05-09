@@ -23,15 +23,15 @@ class PermissionValidator:
 
     def get_user_role_level(self, member: discord.Member) -> int:
         """Determines the highest role level of a Discord member."""
-        if member.guild_permissions.administrator:
+        if hasattr(member, 'guild_permissions') and member.guild_permissions.administrator:
             return self.ROLE_HIERARCHY["admin"]
         
         # Check role names (case-insensitive)
         role_names = [role.name.lower() for role in member.roles]
         
-        if "admin" in role_names or "owner" in role_names:
+        if any(r in role_names for r in ["admin", "owner", "administrator"]):
             return self.ROLE_HIERARCHY["admin"]
-        if "moderator" in role_names or "staff" in role_names:
+        if any(r in role_names for r in ["moderator", "staff", "mod"]):
             return self.ROLE_HIERARCHY["moderator"]
             
         return self.ROLE_HIERARCHY["user"]

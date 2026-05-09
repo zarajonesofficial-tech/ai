@@ -19,10 +19,10 @@ class MasterIntentRouter:
     You are an Intent Classifier for an AI Operations platform.
     Your job is to categorize the user's message into one of four categories:
     
-    1. WORKFLOW: Multi-step tasks or complex automation requests (e.g., 'start maintenance and restart', 'announce event and then mute everyone').
-    2. ACTION: Single executable commands (e.g., 'mute @user', 'warn @user', 'restart server', 'mention everyone', 'send embed').
-    3. FACTUAL: Questions about server status, rules, players, or information (e.g., 'who is online?', 'what are the rules?', 'is the server laggy?').
-    4. SOCIAL: Casual conversation, greetings, jokes, or banter (e.g., 'hello bot', 'entha bro', 'good morning', 'tell me a joke').
+    1. WORKFLOW: Multi-step tasks or complex automation requests (e.g., 'start maintenance and restart').
+    2. ACTION: Single executable commands (e.g., 'mute @user', 'restart server', 'review whitelist').
+    3. FACTUAL: Questions about server status, rules, or players.
+    4. SOCIAL: Casual conversation and banter.
     
     CRITICAL: 
     - Commands like 'mention everyone' or 'ping all' are ACTION, not social.
@@ -60,7 +60,7 @@ class MasterIntentRouter:
         # 1. Action/Workflow priority
         if "then" in text or "and then" in text: return Intent.WORKFLOW
         
-        actions = ["mute", "ban", "kick", "warn", "restart", "mention", "ping", "clear", "announce"]
+        actions = ["mute", "ban", "kick", "warn", "restart", "mention", "ping", "clear", "announce", "whitelist", "application"]
         if any(a in text for a in actions): return Intent.ACTION
         
         # 2. Factual

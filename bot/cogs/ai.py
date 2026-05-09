@@ -5,6 +5,7 @@ from discord import app_commands
 from discord.ext import commands
 from ai.orchestrator.main import orchestrator
 from ai.orchestrator.social_memory import social_memory
+from ai.orchestrator.social_context import DiscordSocialContext
 from core.repository import op_repo
 from loguru import logger
 
@@ -18,11 +19,25 @@ class AICog(commands.Cog):
     async def ai_ask(self, interaction: discord.Interaction, question: str):
         await interaction.response.defer()
         try:
-            # Pass full context to allow potential action execution
+            # Build partial context for Slash Command
+            # Note: discord.Interaction doesn't always have a .message, 
+            # so we manually build a minimal context pkg.
+            social_context = {
+                "author": {
+                    "display_name": interaction.user.display_name,
+                    "permissions": {
+                        "admin": interaction.user.guild_permissions.administrator,
+                        "moderator": interaction.user.guild_permissions.manage_messages
+                    }
+                },
+                "channel": {"name": interaction.channel.name if hasattr(interaction.channel, "name") else "unknown"}
+            }
+
             response_content = await orchestrator.handle_query(
                 message=question,
                 member=interaction.user,
-                channel=interaction.channel
+                channel=interaction.channel,
+                social_context=social_context
             )
             
             embed = discord.Embed(
@@ -41,7 +56,7 @@ class AICog(commands.Cog):
         if message.author.id == self.bot.user.id:
             return
 
-        # 1. Passive observation
+        # 1. PASSIVE OBSERVATION: Add EVERY message to social memory
         await social_memory.add_message(
             channel_id=message.channel.id,
             role="user",
@@ -54,7 +69,7 @@ class AICog(commands.Cog):
         is_reply_to_me = message.reference and message.reference.resolved and message.reference.resolved.author.id == self.bot.user.id
 
         if is_mentioned or is_reply_to_me:
-            # 3. Cooldown (10 seconds)
+            # 3. Cooldown
             now = datetime.datetime.now()
             last_call = self.channel_cooldowns.get(message.channel.id)
             if last_call and (now - last_call).total_seconds() < 10:
@@ -62,7 +77,7 @@ class AICog(commands.Cog):
             self.channel_cooldowns[message.channel.id] = now
 
             try:
-                # Trigger typing indicator once
+                # One-shot typing
                 if not self.is_throttled:
                     try:
                         await message.channel.typing()
@@ -77,11 +92,16 @@ class AICog(commands.Cog):
                     await message.reply("Entha bro, njan ivide und 👀")
                     return
 
-                # Master Pipeline: Automatically routes to Social, Action, or Factual
+                # Build Full Social Context Package
+                ctx_builder = DiscordSocialContext(message)
+                social_context = ctx_builder.to_dict()
+
+                # Master Pipeline with full social context
                 response_content = await orchestrator.handle_query(
                     message=clean_content,
                     member=message.author,
-                    channel=message.channel
+                    channel=message.channel,
+                    social_context=social_context
                 )
                 
                 await message.reply(response_content)

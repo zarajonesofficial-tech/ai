@@ -35,6 +35,15 @@ class Settings(BaseSettings):
     PANEL_USER: Optional[str] = None
     PANEL_PASS: Optional[str] = None
     
+    # Pterodactyl
+    PTERO_API_KEY: Optional[str] = None
+    PTERO_SERVER_ID: Optional[str] = None
+    PTERO_PANEL_URL: str = "https://panel.wammuhost.com"
+    
+    # Official Bot API (for whitelist/dashboard integration)
+    OFFICIAL_BOT_API: str = "https://skybot.skyrealm.fun"
+    INTERNAL_API_KEY: Optional[str] = None
+    
     # API
     SECRET_KEY: str
     ALGORITHM: str = "HS256"
