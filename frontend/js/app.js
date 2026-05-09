@@ -1,6 +1,6 @@
 // app.js - CHRIZ__3656 AI Dashboard Logic
 
-const API_BASE = "http://localhost:8000/api";
+const API_BASE = "http://localhost:8001/api";
 let currentUser = { username: "Admin", role: "admin" };
 
 // --- Routing ---
