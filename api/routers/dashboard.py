@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 from bot.main import bot
 from core.config import settings
 
-router = APIRouter(prefix="/dashboard", tags=["Dashboard"])
+router = APIRouter(prefix="/api/dashboard", tags=["Dashboard"])
 
 
 class MessageActionRequest(BaseModel):

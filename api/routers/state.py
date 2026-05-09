@@ -4,7 +4,7 @@ from utils.minecraft import mc_client
 from typing import Dict, Any
 import re
 
-router = APIRouter(prefix="/state", tags=["Operational State"])
+router = APIRouter(prefix="/api/state", tags=["Operational State"])
 
 @router.get("")
 async def get_state():

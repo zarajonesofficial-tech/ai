@@ -58,8 +58,8 @@ app.mount("/css", StaticFiles(directory="frontend/css"), name="frontend-css")
 app.mount("/js", StaticFiles(directory="frontend/js"), name="frontend-js")
 
 # Include API Routers
-app.include_router(state_router, prefix="/api")
-app.include_router(dashboard_router, prefix="/api")
+app.include_router(state_router)
+app.include_router(dashboard_router)
 
 @app.get("/health")
 async def health_check():
