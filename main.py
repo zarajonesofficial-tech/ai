@@ -52,6 +52,8 @@ app.add_middleware(
 
 # Mount MCP Server
 app.mount("/mcp", mcp_app.sse_app(mount_path="/mcp"))
+
+# Mount Static Files for Dashboard
 app.mount("/css", StaticFiles(directory="frontend/css"), name="frontend-css")
 app.mount("/js", StaticFiles(directory="frontend/js"), name="frontend-js")
 
@@ -59,14 +61,13 @@ app.mount("/js", StaticFiles(directory="frontend/js"), name="frontend-js")
 app.include_router(state_router, prefix="/api")
 app.include_router(dashboard_router, prefix="/api")
 
-
-@app.get("/dashboard")
-async def dashboard():
-    return FileResponse("frontend/index.html")
-
 @app.get("/health")
 async def health_check():
     return {"status": "healthy", "project": settings.PROJECT_NAME}
+
+@app.get("/dashboard")
+async def dashboard_page():
+    return FileResponse("frontend/index.html")
 
 @app.get("/")
 async def root():
@@ -74,9 +75,6 @@ async def root():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(
-        "main:app",
-        host="0.0.0.0",
-        port=int(os.getenv("PORT", "8001")),
-        reload=False
-    )
+    # Use environment port for Railway/Production, fallback to 8001
+    port = int(os.getenv("PORT", 8001))
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=False)
