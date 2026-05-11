@@ -65,7 +65,8 @@ class AICog(commands.Cog):
         )
 
         # 2. Check triggers
-        is_mentioned = self.bot.user.mentioned_in(message)
+        # Only trigger if directly mentioned (excludes @everyone/@here)
+        is_mentioned = self.bot.user in message.mentions
         is_reply_to_me = message.reference and message.reference.resolved and message.reference.resolved.author.id == self.bot.user.id
 
         if is_mentioned or is_reply_to_me:
